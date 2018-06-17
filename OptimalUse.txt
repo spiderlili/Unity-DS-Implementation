@@ -1,0 +1,56 @@
+Optimal use of data structures
+
+Avoid choosing data structures that are only convenient to use. 
+Choose the data structure that has the performance characteristics that align best with the algorithm or game system.
+
+Problem: Randomly indexing / iterating every frame in constant time
+
+Solution: arrays or Lists.
+Indexing into an array or a list is extremely cheap - it requires on a little bit of addition under the hood and occurs in constant time. 
+
+Problem:
+Constant time addition or removal
+
+Solution:
+a Dictionary or Hashset
+
+Problem: 
+Relating data in a key-value manner, wherein a piece of data is related to another in a one-way manner
+
+Solution: 
+Use a Dictionary.
+
+Both of Hashsets and Dictionaries are backed by a hash table. 
+a hash table has a number of buckets; each bucket is a list that holds all of the values which have a specific hash code. 
+In C#, this hash code comes from the GetHashCode method. 
+Since the number of values in a given bucket is usually much smaller than the total size of the Hashset or Dictionary, 
+adding and removing things from a bucket is much closer to constant time than adding or removing things randomly from a List or array. 
+The precise difference depends on the capacity of your hash table and the number of items you’re storing in it.
+Checking for the presence (or absence) of a given value in a Hashset or Dictionary is very cheap for the same reason: 
+it’s quick to check over the (relatively small) number of values in the bucket that represents the value’s hash code.
+
+Problem: Too much overhead from the misuse of dictionaries
+
+If you want to iterate over pairs of data items every frame, often people use a dictionary because it’s expedient. 
+The problem with this is that you’re iterating over a hash table. 
+That means every single bucket in that hash table has to be iterated over, whether or not it contains any values. 
+This adds considerable overhead, especially when iterating over hash tables with few values stored inside them.
+
+Solution:
+Create a structure or tuple, then store a List or array of those structures or tuples that contain your data relations. 
+Iterate over this List/array instead of iterating over the Dictionary.
+
+Problem: multiple concerns
+In the real world, most problems present you with multiple overlapping requirements. 
+There will not be one data structure that meets all of your needs.
+Example: an Update Manager - an architectural programming pattern, whereby an object (usually a MonoBehaviour) distributes Update callbacks to different systems inside of your game.
+When systems want to receive Updates, they subscribe to them via the Update Manager object.
+Such a system needs: low-overhead iteration, constant time insertion, constant-time duplicate checks.
+
+Solution: Use two data structures
+
+Problem: Maintain a list or array for iteration.
+
+Solution:
+Before you change the list, use a Hashset (or another kind of indexing set) to make sure the item that you’re adding or removing is actually present.
+If removal is a concern, consider a linked list or intrusively-linked list implementation (be aware that this results in higher memory cost and slightly higher iteration overhead).
